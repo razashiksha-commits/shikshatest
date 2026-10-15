@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JEE Main 2027 Session 1 Countdown</title>
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 12px;
+      background: #ffffff;
+      color: #26364a;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .jee-countdown {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 22px;
+      border: 1px solid #dce3eb;
+      border-radius: 14px;
+      text-align: center;
+      background: #fff;
+    }
+    .jee-label {
+      margin: 0 0 8px;
+      color: #2457a7;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(20px, 4vw, 28px);
+      line-height: 1.25;
+    }
+    .jee-next-date { margin: 0; font-size: 14px; color: #4b5563; }
+    .jee-timer {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin: 22px 0 16px;
+    }
+    .jee-unit {
+      min-width: 0;
+      padding: 16px 4px;
+      border-radius: 10px;
+      background: #f1f5fb;
+      border: 1px solid #e2eaf5;
+    }
+    .jee-unit strong {
+      display: block;
+      font-size: clamp(24px, 5vw, 38px);
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+    }
+    .jee-unit span { display: block; margin-top: 7px; font-size: 12px; color: #526174; }
+    .jee-status { margin: 0; font-size: 13px; color: #526174; line-height: 1.5; }
+    .jee-dates { margin-top: 18px; padding-top: 14px; border-top: 1px solid #e5e7eb; }
+    .jee-dates strong { display: block; font-size: 13px; margin-bottom: 6px; }
+    .jee-dates p { margin: 0; font-size: 13px; line-height: 1.6; color: #526174; }
+    @media (max-width: 420px) {
+      body { padding: 6px; }
+      .jee-countdown { padding: 16px 10px; }
+      .jee-timer { gap: 5px; margin: 18px 0 14px; }
+      .jee-unit { padding: 13px 2px; }
+      .jee-unit span { font-size: 11px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="jee-countdown" aria-labelledby="jee-title">
+    <p class="jee-label">JEE MAIN 2027 · SESSION 1</p>
+    <h1 id="jee-title">How Many Days Left for JEE Main 2027?</h1>
+    <p class="jee-next-date" id="jee-next-date">Loading exam date…</p>
+    <div class="jee-timer" aria-label="Countdown">
+      <div class="jee-unit"><strong id="jee-days">--</strong><span>Days</span></div>
+      <div class="jee-unit"><strong id="jee-hours">--</strong><span>Hours</span></div>
+      <div class="jee-unit"><strong id="jee-minutes">--</strong><span>Minutes</span></div>
+      <div class="jee-unit"><strong id="jee-seconds">--</strong><span>Seconds</span></div>
+    </div>
+    <p class="jee-status" id="jee-status" aria-live="polite">Countdown uses India Standard Time (IST).</p>
+    <div class="jee-dates">
+      <strong>Scheduled Session 1 exam dates</strong>
+      <p>January 22, 23, 24, 28, 29 and 30, 2027</p>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      // Dates are treated as midnight IST. Verify dates against official NTA notices before publishing.
+      const examDates = [
+        "2027-01-22", "2027-01-23", "2027-01-24",
+        "2027-01-28", "2027-01-29", "2027-01-30"
+      ];
+      const ids = ["days", "hours", "minutes", "seconds"];
+      const byId = id => document.getElementById("jee-" + id);
+
+      function updateCountdown() {
+        const now = Date.now();
+        const next = examDates
+          .map(date => ({ date, time: new Date(date + "T00:00:00+05:30").getTime() }))
+          .find(item => item.time > now);
+
+        if (!next) {
+          ids.forEach(id => byId(id).textContent = "0");
+          byId("next-date").textContent = "JEE Main 2027 Session 1 dates have passed";
+          byId("status").textContent = "Please check official NTA updates for the latest exam information.";
+          return;
+        }
+
+        const remaining = Math.max(0, next.time - now);
+        const totalSeconds = Math.floor(remaining / 1000);
+        const values = [
+          Math.floor(totalSeconds / 86400),
+          Math.floor((totalSeconds % 86400) / 3600),
+          Math.floor((totalSeconds % 3600) / 60),
+          totalSeconds % 60
+        ];
+        ids.forEach((id, i) => byId(id).textContent = String(values[i]).padStart(2, "0"));
+
+        const formattedDate = new Date(next.time).toLocaleDateString("en-IN", {
+          day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Kolkata"
+        });
+        byId("next-date").textContent = "Countdown to next scheduled exam date: " + formattedDate;
+        byId("status").textContent =
+          "Updates every second · Time zone: India Standard Time (IST). Countdown targets the start of the listed date, not an individual shift time.";
+      }
+
+      updateCountdown();
+      window.setInterval(updateCountdown, 1000);
+    })();
+  </script>
+</body>
+</html>
